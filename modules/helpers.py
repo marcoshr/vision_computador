@@ -1,6 +1,18 @@
 import numpy as np
+import os
+import cv2
+
+def load_images_from_folder(folder):
+    images = []
+    for filename in os.listdir(folder):
+        img = cv2.imread(os.path.join(folder,filename))
+        if img is not None:
+            images.append(img)
+    return images
 
 
+
+############################ HOG
 ### PRIMERA FASE: Obtener el gradiente de cada píxel
 def get_gradient_matrix(img):
     print(len(img))
