@@ -2,13 +2,19 @@ import numpy as np
 import os
 import cv2
 
-def load_images_from_folder(folder):
+def load_images_from_folder(folder, class_label):
     images = []
+    classes = []
+
     for filename in os.listdir(folder):
         img = cv2.imread(os.path.join(folder,filename))
+
         if img is not None:
+            # img = color.rgb2gray(io.imread(filedir))
             images.append(img)
-    return images
+            classes.append(class_label)
+    
+    return images, classes
 
 
 
