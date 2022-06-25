@@ -12,6 +12,9 @@ def load_images_from_folder(folder):
 
 
 
+
+
+
 ############################ HOG
 ### PRIMERA FASE: Obtener el gradiente de cada píxel
 def get_gradient_matrix(img):
@@ -25,11 +28,14 @@ def get_gradient_matrix(img):
 
     # result = np.array((m, n), np.int64)
     # result = np.array([0 for x in range(m)] for y in range(n))
-    result = np.zeros((m, n))
+    result = np.zeros((m, n, 2))
+    # result = []
+
     ## NB: The border is cut off
     for i in range(1, m-1):
         for j in range(1, n-1):
-            result[i, j] = get_gradient(img, i, j)
+            result[i, j] = get_gradient(img, i, j) # orginal
+            # result.append() = get_gradient(img, i, j)
     return result
 
 def get_gradient(img, i, j):
@@ -52,8 +58,9 @@ def get_gradient(img, i, j):
     # print(f'norm: {norm}')
     # print(f'brackets: {brackets}')
 
-    # return (norm, brackets)
-    return norm
+    return (norm, brackets) # original
+    # return norm
+    # return [norm, brackets]
 
 
 
@@ -62,26 +69,28 @@ def get_gradient(img, i, j):
 def split_in_cells(gradient_matrix, cell_size):
     print('--- split_in_cells ---')
     print(f'gradient_matrix shape: {gradient_matrix.shape}')
-    m, n = gradient_matrix.shape
+    m, n, c = gradient_matrix.shape
     cell_rows = int(m / cell_size)
     cell_columns = int(n / cell_size)
     print(f'cell_rows: {cell_rows}')
     print(f'cell_columns: {cell_columns}')
 
     # result = np.array(cell_rows, cell_columns)
-    result = np.zeros((cell_rows, cell_columns))
-    print(f'result.shape: {result.shape}')
+    # result = np.zeros((cell_rows, cell_columns))
+    result = []
+    print(f'result length: {len(result)}')
 
     for i in range(cell_rows):
         for j in range(cell_columns):
-            print(f'i: {i}')
-            print(f'j: {j}')
+            # print(f'i: {i}')
+            # print(f'j: {j}')
 
             cell_img = gradient_matrix[i*cell_size : (i+1)*cell_size,  j*cell_size : (j+1)*cell_size]
-            print(f'cell_img.shape: {cell_img.shape}')
+            # print(f'cell_img.shape: {cell_img.shape}')
             # print(f'cell_img:\n{cell_img}')
-            print(f'result[i, j].shape: {result[i, j].shape}')
-            result[i, j] = cell_img ####################################
+            # print(f'result[i, j].shape: {result[i, j].shape}')
+            # result[i, j] = cell_img ####################################
+            result.append(cell_img)
 
     return result
 
@@ -89,26 +98,27 @@ def split_in_cells(gradient_matrix, cell_size):
 
 ### TERCERA FASE: Obtener histograma por celda
 
-def getHistogram(cell):
-    (m, n) = cell.shape()  # It should be m = n = cellSize
+def get_histogram(cell):
+    m, n, c = cell.shape  # It should be m = n = cellSize
     categories = np.array(m*n)
     for i in range(m):
         for j in range(n):
+            print(cell[i, j])
             (norm, argument) = cell[i, j]
-            categories[(n*i)+j] = getHistogramCategory(argument)
+            categories[(n*i)+j] = get_histogram_category(argument)
     histogram = np.histogram(categories)
-    return normalizeHistogram(histogram)
+    return normalize_histogram(histogram)
 
 
 orientationReference = np.linspace(0, 180, 10)
 
-def getHistogramCategory(value: float):
-    return getHistogramCategoryAux(value, -1)
+def get_histogram_category(value: float):
+    return get_histogram_category_aux(value, -1)
 
-def getHistogramCategoryAux(value: float, i: int):
-    return i if (value <= orientationReference[i+1]) else getHistogramCategoryAux(value, i+1)
+def get_histogram_category_aux(value: float, i: int):
+    return i if (value <= orientationReference[i+1]) else get_histogram_category_aux(value, i+1)
 
-def normalizeHistogram(histogram):
+def normalize_histogram(histogram):
     return histogram / np.linalg.norm(histogram)
 
 
