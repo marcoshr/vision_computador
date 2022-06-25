@@ -58,14 +58,18 @@ def split_in_cells(gradient_matrix, cell_size):
 
     # result = np.array(cell_rows, cell_columns)
     result = np.zeros((cell_rows, cell_columns))
+    print(f'result.shape: {result.shape}')
 
     for i in range(cell_rows):
         for j in range(cell_columns):
+            print(f'i: {i}')
+            print(f'j: {j}')
+
             cell_img = gradient_matrix[i*cell_size : (i+1)*cell_size,  j*cell_size : (j+1)*cell_size]
-            print(cell_img.shape)
-            print(cell_img)
-            print(result[i, j].shape)
-            result[i, j] = cell_img
+            print(f'cell_img.shape: {cell_img.shape}')
+            # print(f'cell_img:\n{cell_img}')
+            print(f'result[i, j].shape: {result[i, j].shape}')
+            result[i, j] = cell_img ####################################
 
     return result
 
